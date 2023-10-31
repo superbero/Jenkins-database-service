@@ -15,7 +15,7 @@ spec:
         app: {{ .Values.Deployment.movie_db.name}} #postgres-movie-db # has to match .spec.selector.matchLabels
     spec:
       containers:
-      - name: {{ .Values.Deployment.movie_db.name}} #postgres-movie-db
+      - name: {{ .Values.Deployment.movie_db.name }} #postgres-movie-db
         image: {{ .Values.Deployment.postgres.image }} #postgres:12.1-alpine
         ports:
         - containerPort: {{ .Values.Deployment.postgres.ports }} #5432

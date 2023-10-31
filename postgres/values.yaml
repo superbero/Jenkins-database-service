@@ -10,6 +10,17 @@ configmap:
   cast_service:
     name: cast-service-config
     uri: "postgresql://cast:password@pg-cast/cast_db"
+  
+  postgres_movie:
+    name: postgres-movie-configmap
+    POSTGRES_USER: "movie"
+    POSTGRES_PASSWORD: "password"
+    POSTGRES_DB: "movie_db"
+    
+  movie_service:
+    name: movie-service-config
+    uri: "postgresql://movie:password@pg-movie:5432/movie_db"
+    cast_service_uri: "http://cast:8000/api/v1/casts/"
 
 Deployment:
   imagePullPolicy: IfNotPresent
@@ -27,6 +38,13 @@ Deployment:
     image: superbero/cast_service:latest
     name: cast-svc-deploy
 
+  movie_db:
+    name: postgres-movie-db
+
+  movie_service:
+    image: superbero/movie_service:latest
+    name: movie-svc-deploy
+
 volumes:
   storageClassName: standard
   accessModes: ReadWriteMany
@@ -37,12 +55,16 @@ volumes:
     volume_path: /Users/admin/volumes
    
   persistentvolumeclaim:
-    size: 5Gi
+    cast_size: 5Gi
+    movie_size: 10Gi
     storageClassName: standard
     accessModes: ReadWriteMany
 
     cast_db:
       name: postgres-cast-volumes-claims
+    
+    movie_db:
+      name: postgres-movie-volumes-claims
 
 services:
   postgres_cast:
@@ -56,3 +78,24 @@ services:
     name: cast-db-service
     port: 8000
     targetPort: 8000
+
+  postgres_movie:
+    name: pg-movie
+    type: ClusterIP
+    ports:  5432
+    targetPort: 5432
+    protocol: TCP
+
+  movie_service:
+    type: ClusterIP
+    name: movie-service
+    port: 8000
+    targetPort: 8000
+    protocol: TCP
+   
+  
+    
+    
+
+  
+
